@@ -1,0 +1,15 @@
+{
+  "extends": "@tsconfig/node24",
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": ".",
+    "noEmit": true,
+    "paths": {
+      "*": ["src/types/*"],
+      "#lib": ["src/lib"],
+      "#helpers": ["src/lib/helpers"]
+    }
+  },
+  "include": ["src/**/*", "vitest.config.ts"],
+  "exclude": ["**/*.spec.ts"]
+}
