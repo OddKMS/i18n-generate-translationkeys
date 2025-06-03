@@ -1,13 +1,24 @@
 #!/usr/bin/env bash
 PROJECT_HOME=$(git rev-parse --show-toplevel)
-SCRIPT_HOME="$PROJECT_HOME/tools"
-i18n_HOME="$PROJECT_HOME/src/i18n"
+SCRIPT_HOME="$PROJECT_HOME/src"
+
+# Read variables from config file, set default values if null
+source "$PROJECT_HOME/translationKeys.conf"
+
+i18n_LOCATION=${i18n_LOCATION:"src/i18n"}
+i18n_HOME="$PROJECT_HOME/$i18n_LOCATION"
+
+TRANSLATIONS_LOCATION=${TRANSLATIONS_LOCATION:"$i18n_HOME/translations"}
+TRANSLATIONS_FILENAME=${TRANSLATIONS_FILENAME:"translations.json"}
+
+OUTPUT_LOCATION=${OUTPUT_LOCATION:"$i18n_HOME/translations"}
+OUTPUT_FILENAME=${OUTPUT_FILENAME:"translations.json"}
 
 # All translation files across all languages
-translation_files="$i18n_HOME/translations/*/translations.json"
+translation_files="$TRANSLATIONS_LOCATION/*/$TRANSLATIONS_FILENAME"
 
 # Destination file
-translationKeys_file="$i18n_HOME/translations/translationKeys.ts"
+translationKeys_file="$OUTPUT_LOCATION/$OUTPUT_FILENAME"
 
 # Supress resulting file output?
 quiet=false
