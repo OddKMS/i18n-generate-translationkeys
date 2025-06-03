@@ -5,14 +5,14 @@ SCRIPT_HOME="$PROJECT_HOME/src"
 # Read variables from config file, set default values if null
 source "$PROJECT_HOME/translationKeys.conf"
 
-i18n_LOCATION=${i18n_LOCATION:"src/i18n"}
+i18n_LOCATION=${i18n_LOCATION:-"src/i18n"}
 i18n_HOME="$PROJECT_HOME/$i18n_LOCATION"
 
-TRANSLATIONS_LOCATION=${TRANSLATIONS_LOCATION:"$i18n_HOME/translations"}
-TRANSLATIONS_FILENAME=${TRANSLATIONS_FILENAME:"translations.json"}
+TRANSLATIONS_LOCATION=${TRANSLATIONS_LOCATION:-"$i18n_HOME/translations"}
+TRANSLATIONS_FILENAME=${TRANSLATIONS_FILENAME:-"translations.json"}
 
-OUTPUT_LOCATION=${OUTPUT_LOCATION:"$i18n_HOME/translations"}
-OUTPUT_FILENAME=${OUTPUT_FILENAME:"translations.json"}
+OUTPUT_LOCATION=${OUTPUT_LOCATION:-"$i18n_HOME/translations"}
+OUTPUT_FILENAME=${OUTPUT_FILENAME:-"translations.json"}
 
 # All translation files across all languages
 translation_files="$TRANSLATIONS_LOCATION/*/$TRANSLATIONS_FILENAME"
