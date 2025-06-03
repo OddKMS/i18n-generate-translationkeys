@@ -5,9 +5,11 @@ import path from 'path';
 export default defineConfig({
   resolve: {
     alias: {
-      '#': path.resolve(__dirname, './src'),
-      '#lib': path.resolve(__dirname, './src/lib'),
-      '#helpers': path.resolve(__dirname, './src/lib/helpers'),
+      '#helpers': path.resolve(__dirname, './src/helpers'),
+      '#generate-keys': path.resolve(
+        __dirname,
+        './src/generate-translationkeys.ts',
+      ),
     },
   },
   test: {
@@ -16,7 +18,6 @@ export default defineConfig({
     root: '.',
     environment: 'node',
     passWithNoTests: true,
-    setupFiles: ['./src/tests/setup.ts'],
     coverage: {
       provider: 'v8',
       exclude: ['**/index.ts', ...coverageConfigDefaults.exclude],
