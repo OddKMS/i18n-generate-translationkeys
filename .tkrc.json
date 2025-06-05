@@ -1,6 +1,8 @@
-// {
-//   "i18n_LOCATION": "NULL",
-//   "TRANSLATIONS_LOCATION": "NULL",
-//   "OUTPUT_LOCATION": "NULL",
-//   "QUIET": "NULL"
-// }
+{
+  "$schema": "./.tkrc.schema.json",
+  "i18nLocation": "./src/i18n/config",
+  "translationsLocation": "./src/i18n/translations/config",
+  "output": "./src/i18n/config",
+  "filenameOverride": "overrideFile.ts",
+  "quiet": false
+}

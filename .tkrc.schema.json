@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://www.npmjs.com/package/i18n-generate-translationkeys/tkrc.schema.json",
+  "title": "i18n Generate-TranslationKeys Config File",
+  "description": "Config file for file locations and output",
+  "type": "object",
+  "default": {
+    "i18nLocation": "./src/i18n",
+    "translationsLocation": "./src/i18n/translations",
+    "output": "./src/i18n",
+    "filenameOverride": "translationKeys.ts",
+    "quiet": false
+  },
+  "properties": {
+    "$schema": {
+      "title": "Schema",
+      "description": "Includes the $schema tag so it doesn't throw off the validator."
+    },
+    "i18nLocation": {
+      "title": "i18n Location",
+      "description": "Location of the i18n folder in the project.",
+      "type": "string",
+      "pattern": "^(.*/)([^/]*)$",
+      "default": "./src/i18n"
+    },
+    "translationsLocation": {
+      "title": "Translations Location",
+      "description": "Location of the translations folders for the project.",
+      "type": "string",
+      "pattern": "^(.*/)([^/]*)$",
+      "default": "./src/i18n/translations"
+    },
+    "output": {
+      "title": "Output",
+      "description": "Path to the output directory of the translationKeys.ts file.",
+      "type": "string",
+      "pattern": "^(.*/)([^/]*)$",
+      "default": "./src/i18n"
+    },
+    "filenameOverride": {
+      "title": "Filename Override",
+      "description": "Overrides the file and object name of the output.",
+      "type": "string",
+      "pattern": "^.*\\.(js|ts)$",
+      "default": "translationKeys.ts"
+    },
+    "quiet": {
+      "title": "Quiet",
+      "description": "Supress output from the script.",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "additionalProperties": false
+}
