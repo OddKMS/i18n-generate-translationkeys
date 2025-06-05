@@ -3,7 +3,8 @@ import * as path from 'path';
 import * as jq from 'node-jq';
 import { getConfiguration } from '#helpers';
 
-const { i18nLocation, translations, output, quiet } = getConfiguration();
+const { i18nLocation, translations, output, filenameOverride, quiet } =
+  getConfiguration();
 
 const readFiles = () => {
   //  Create a union of the different translation files.
@@ -19,10 +20,14 @@ const readFiles = () => {
 };
 
 const generate = () => {
-  console.log(i18nLocation);
-  console.log(translations);
-  console.log(output);
-  console.log(quiet);
+  console.log('--------------------------------------------------------------');
+  console.log('Running script with the following config:');
+  console.log('--------------------------------------------------------------');
+  console.log('i18n location:     ', i18nLocation);
+  console.log('translations:      ', translations);
+  console.log('output:            ', output);
+  console.log('filename override: ', filenameOverride);
+  console.log('quiet:             ', quiet);
 };
 
 export default generate;
