@@ -71,42 +71,52 @@ function getConfiguration(): configuration {
   const configFile = getConfigFromFile();
 
   // Default values
-  const i18nLocationDefault = './src/i18n';
-  const translationsLocationDefault = i18nLocationDefault + '/translations';
-  const filenameDefault = '/translationKeys.ts';
-  const outputLocationDefault = i18nLocationDefault;
-  const quietDefault = false;
+  const defaultI18nLocation = './src/i18n';
+  const defaultTranslationsLocation = defaultI18nLocation + '/translations';
+  const defaultOutputLocation = defaultI18nLocation;
+  const defaultFilename = '/translationKeys.ts';
+  const defaultQuiet = false;
 
   // Parameter priority is as follows:
   // CLI Argument > Config File > Default Values
   const i18nLocation =
-    cliArgs.i18nLocation ?? configFile?.i18nLocation ?? i18nLocationDefault;
+    cliArgs.i18nLocation ?? configFile?.i18nLocation ?? defaultI18nLocation;
 
   const translations =
     cliArgs.translations ??
     configFile?.translationsLocation ??
-    translationsLocationDefault;
+    defaultTranslationsLocation;
 
-  let output = cliArgs.output ?? configFile?.output ?? outputLocationDefault;
+  let output = cliArgs.output ?? configFile?.output ?? defaultOutputLocation;
 
   // If the output path is erroneously provided with a filename/ending
   // we remove the filename and display an message informing the user
   // of the correct way to change the filename
-  const outputHasFileEnding: RegExp = /^.*\.(.*)$/gm;
+  const outputHasFileEnding: RegExp = /^.+\.(.+)$/gm;
   if (outputHasFileEnding.test(output)) {
-    console.warn('Filename detected in output parameter.');
-    console.warn(
-      'The supplied filename will be ignored and default filename will be used.'
-    );
-    console.warn(
-      'To output to a different file use the --filenameOverride parameter.'
-    );
+    const warningText =
+      'Filename detected in output parameter.\n' +
+      'The supplied filename will be ignored and default filename will be used.\n' +
+      'To output to a different file use the --filenameOverride parameter\n' +
+      'or set the filenameOverride field of the config file';
+
+    console.warn(warningText);
+
+    // Finds and removes any filename including the preceding '/'
+    const findLastLegOfOutput: RegExp = /([\/][^\/|\n]+\..+)$/gm;
+    output = output.replace(findLastLegOfOutput, '');
+
+    // in the case that this leaves output completely empty we fall back
+    // to the default output location
+    if (output.length == 0) {
+      output = defaultOutputLocation;
+    }
   }
 
   const filenameOverride =
-    cliArgs.filenameOverride ?? configFile?.filenameOverride ?? filenameDefault;
+    cliArgs.filenameOverride ?? configFile?.filenameOverride ?? defaultFilename;
 
-  const quiet = cliArgs.quiet ?? configFile?.quiet ?? quietDefault;
+  const quiet = cliArgs.quiet ?? configFile?.quiet ?? defaultQuiet;
 
   return {
     i18nLocation,
