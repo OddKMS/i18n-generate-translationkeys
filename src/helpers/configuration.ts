@@ -8,6 +8,7 @@ type configuration = {
   translations: string;
   output: string;
   filenameOverride: string;
+  verbose: boolean;
   quiet: boolean;
 };
 
@@ -35,6 +36,11 @@ function getConfiguration(): configuration {
         type: 'string',
         description: 'Overrides the file and object name of the output.',
       },
+      verbose: {
+        alias: 'v',
+        type: 'boolean',
+        description: 'Show additional runtime information from the script.',
+      },
       quiet: {
         alias: 'q',
         type: 'boolean',
@@ -50,6 +56,7 @@ function getConfiguration(): configuration {
         translationsLocation: string;
         output: string;
         filenameOverride: string;
+        verbose: boolean;
         quiet: boolean;
       }
     | undefined {
@@ -75,6 +82,7 @@ function getConfiguration(): configuration {
   const defaultTranslationsLocation = defaultI18nLocation + '/translations';
   const defaultOutputLocation = defaultI18nLocation;
   const defaultFilename = '/translationKeys.ts';
+  const defaultVerbose = false;
   const defaultQuiet = false;
 
   // Parameter priority is as follows:
@@ -116,6 +124,8 @@ function getConfiguration(): configuration {
   const filenameOverride =
     cliArgs.filenameOverride ?? configFile?.filenameOverride ?? defaultFilename;
 
+  const verbose = cliArgs.verbose ?? configFile?.verbose ?? defaultVerbose;
+
   const quiet = cliArgs.quiet ?? configFile?.quiet ?? defaultQuiet;
 
   return {
@@ -123,6 +133,7 @@ function getConfiguration(): configuration {
     translations,
     output,
     filenameOverride,
+    verbose,
     quiet,
   };
 }
