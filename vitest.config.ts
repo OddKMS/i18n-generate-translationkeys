@@ -19,6 +19,7 @@ export default defineConfig({
     environment: 'node',
     passWithNoTests: true,
     setupFiles: 'tests/setup.ts',
+    silent: 'passed-only',
     coverage: {
       provider: 'v8',
       exclude: ['**/index.ts', ...coverageConfigDefaults.exclude],

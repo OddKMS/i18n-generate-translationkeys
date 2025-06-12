@@ -7,7 +7,7 @@ type configuration = {
   i18nLocation: string;
   translationsLocation: string;
   output: string;
-  filenameOverride: string;
+  filename: string;
   verbose: boolean;
   quiet: boolean;
 };
@@ -31,7 +31,7 @@ function getConfiguration(): configuration {
         description:
           'Path to the output directory of the translationKeys.ts file.',
       },
-      filenameOverride: {
+      filename: {
         alias: 'f',
         type: 'string',
         description: 'Overrides the file and object name of the output.',
@@ -56,7 +56,7 @@ function getConfiguration(): configuration {
         i18nLocation: string;
         translationsLocation: string;
         output: string;
-        filenameOverride: string;
+        filename: string;
         verbose: boolean;
         quiet: boolean;
       }
@@ -82,7 +82,7 @@ function getConfiguration(): configuration {
   const defaultI18nLocation = './src/i18n';
   const defaultTranslationsLocation = defaultI18nLocation + '/translations';
   const defaultOutputLocation = defaultI18nLocation;
-  const defaultFilename = '/translationKeys.ts';
+  const defaultFilename = 'translationKeys.ts';
   const defaultVerbose = false;
   const defaultQuiet = false;
 
@@ -106,8 +106,8 @@ function getConfiguration(): configuration {
     const warningText =
       'Filename detected in output parameter.\n' +
       'The supplied filename will be ignored and default filename will be used.\n' +
-      'To output to a different file use the --filenameOverride parameter\n' +
-      'or set the filenameOverride field of the config file';
+      'To output to a different file use the --filename parameter\n' +
+      'or set the filename field of the config file';
 
     console.warn(warningText);
 
@@ -122,8 +122,7 @@ function getConfiguration(): configuration {
     }
   }
 
-  const filenameOverride =
-    cliArgs.filenameOverride ?? configFile?.filenameOverride ?? defaultFilename;
+  const filename = cliArgs.filename ?? configFile?.filename ?? defaultFilename;
 
   const verbose = cliArgs.verbose ?? configFile?.verbose ?? defaultVerbose;
 
@@ -133,7 +132,7 @@ function getConfiguration(): configuration {
     i18nLocation,
     translationsLocation,
     output,
-    filenameOverride,
+    filename,
     verbose,
     quiet,
   };

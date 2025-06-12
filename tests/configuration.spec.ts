@@ -10,8 +10,17 @@ const configFileMock = {
   i18nLocation: './testFolder',
   translationsLocation: './testTranslations',
   output: './testOutput',
-  filenameOverride: 'testfile.ts',
+  filename: 'testfile.ts',
   verbose: true,
+  quiet: false,
+};
+
+const configFileDefaults = {
+  i18nLocation: './src/i18n',
+  translationsLocation: './src/i18n/translations',
+  output: './src/i18n',
+  filename: 'translationKeys.ts',
+  verbose: false,
   quiet: false,
 };
 
@@ -83,12 +92,12 @@ describe('The configuration helper', () => {
       JSON.stringify({ ...configFileMock, output: outputParameter })
     );
 
-    const consoleSpy = vi.spyOn(console, 'warn');
+    const consoleWarningSpy = vi.spyOn(console, 'warn');
 
     getConfiguration();
 
-    expect(consoleSpy).toHaveBeenCalledOnce();
-    expect(consoleSpy).toHaveBeenCalledWith(
+    expect(consoleWarningSpy).toHaveBeenCalledOnce();
+    expect(consoleWarningSpy).toHaveBeenCalledWith(
       expect.stringContaining(warningText)
     );
   });
@@ -105,8 +114,6 @@ describe('The configuration helper', () => {
 
     expect(config.output).toBe(truncatedOutputParameter);
   });
-
-  it('should replace the output parameter with the default if the trim leaves it empty', () => {});
 
   it('should prioritize cli arguments over the config file', () => {});
 
