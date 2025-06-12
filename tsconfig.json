@@ -10,5 +10,5 @@
       "#generate-keys": ["./src/generate-translationkeys.ts"]
     }
   },
-  "include": ["./bin.ts", "src/**/*", "vitest.config.ts", "tests/*.spec.ts"]
+  "include": ["./bin.ts", "src/**/*", "vitest.config.ts"]
 }
