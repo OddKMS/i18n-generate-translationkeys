@@ -75,7 +75,23 @@ describe('The configuration helper', () => {
     expect(readFileSpy).toHaveBeenCalledWith(tkrcFilename, 'utf-8');
   });
 
-  it('should display a warning if the output parameter ends with a filename and ending', () => {});
+  it('should display a warning if the output parameter ends with a filename and ending', async () => {
+    const warningText = 'Filename detected in output parameter.';
+    const outputParameter = '/jeg/er/en/fjompe.nisse';
+
+    vi.spyOn(fsMocked, 'readFileSync').mockReturnValueOnce(
+      JSON.stringify({ ...configFileMock, output: outputParameter })
+    );
+
+    const consoleSpy = vi.spyOn(console, 'warn');
+
+    getConfiguration();
+
+    expect(consoleSpy).toHaveBeenCalledOnce();
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringContaining(warningText)
+    );
+  });
 
   it('should trim the filename and ending from the output parameter if they exist', () => {});
 
