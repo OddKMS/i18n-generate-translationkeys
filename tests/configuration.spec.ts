@@ -115,6 +115,18 @@ describe('The configuration helper', () => {
     expect(config.output).toBe(truncatedOutputParameter);
   });
 
+  it('should replace the output parameter with the default if the trim leaves it empty', () => {
+    const outputParameter = '/naruto_episode_01.divx';
+
+    vi.spyOn(fsMocked, 'readFileSync').mockReturnValueOnce(
+      JSON.stringify({ ...configFileMock, output: outputParameter })
+    );
+
+    const config = getConfiguration();
+
+    expect(config.output).toBe(configFileDefaults.output);
+  });
+
   it('should prioritize cli arguments over the config file', () => {});
 
   it('should return a default config if neither parameters nor config file are supplied', () => {});
