@@ -1,11 +1,11 @@
 // for handling command line arguments via npx
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import fs from 'fs';
+import { existsSync, readFileSync } from 'node:fs';
 
 type configuration = {
   i18nLocation: string;
-  translations: string;
+  translationsLocation: string;
   output: string;
   filenameOverride: string;
   verbose: boolean;
@@ -20,7 +20,7 @@ function getConfiguration(): configuration {
         type: 'string',
         description: 'i18n folder in your project',
       },
-      translations: {
+      translationsLocation: {
         alias: 't',
         type: 'string',
         description: 'Location of the translation json files.',
@@ -47,6 +47,7 @@ function getConfiguration(): configuration {
         description: 'Supress output from the script.',
       },
     })
+    .strict()
     .parseSync();
 
   // From config file
@@ -62,13 +63,13 @@ function getConfiguration(): configuration {
     | undefined {
     const configFileName = '.tkrc.json';
 
-    if (fs.existsSync(configFileName)) {
+    if (existsSync(configFileName)) {
       try {
-        const configData = fs.readFileSync(configFileName, 'utf-8');
+        const configData = readFileSync(configFileName, 'utf-8');
         const config = JSON.parse(configData);
         return config;
       } catch (error) {
-        console.error('Could not read from .tkrc.json', error);
+        throw new Error('Could not read from .tkrc.json');
       }
     } else {
       return undefined;
@@ -90,8 +91,8 @@ function getConfiguration(): configuration {
   const i18nLocation =
     cliArgs.i18nLocation ?? configFile?.i18nLocation ?? defaultI18nLocation;
 
-  const translations =
-    cliArgs.translations ??
+  const translationsLocation =
+    cliArgs.translationsLocation ??
     configFile?.translationsLocation ??
     defaultTranslationsLocation;
 
@@ -130,7 +131,7 @@ function getConfiguration(): configuration {
 
   return {
     i18nLocation,
-    translations,
+    translationsLocation,
     output,
     filenameOverride,
     verbose,
