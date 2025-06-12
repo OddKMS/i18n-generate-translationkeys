@@ -93,7 +93,18 @@ describe('The configuration helper', () => {
     );
   });
 
-  it('should trim the filename and ending from the output parameter if they exist', () => {});
+  it('should trim the filename and ending from the output parameter if they exist', () => {
+    const outputParameter = '/we/are/the/knights/who/say.vim';
+    const truncatedOutputParameter = '/we/are/the/knights/who';
+
+    vi.spyOn(fsMocked, 'readFileSync').mockReturnValueOnce(
+      JSON.stringify({ ...configFileMock, output: outputParameter })
+    );
+
+    const config = getConfiguration();
+
+    expect(config.output).toBe(truncatedOutputParameter);
+  });
 
   it('should replace the output parameter with the default if the trim leaves it empty', () => {});
 
