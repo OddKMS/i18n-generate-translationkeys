@@ -139,20 +139,26 @@ describe('The configuration helper', () => {
     expect(config.output).toBe(configFileDefaults.output);
   });
 
-  it('should prioritize cli arguments over the config file', () => {});
+  it.todo('should prioritize cli arguments over the config file', () => {});
 
-  it('should return a default config if neither parameters nor config file are supplied', () => {});
+  it.todo(
+    'should return a default config if neither parameters nor config file are supplied',
+    () => {}
+  );
 
   vi.clearAllMocks();
 });
 
 describe('The cli parameters', () => {
-  it('should support setting the i18n folder location', async () => {});
-  it('should support setting the translations folder location', async () => {});
-  it('should support setting the output folder location', async () => {});
-  it('should support setting a filename override', async () => {});
-  it('should support setting the verbose parameter', async () => {});
-  it('should support setting the quiet parameter', async () => {});
+  it.todo('should support setting the i18n folder location', async () => {});
+  it.todo(
+    'should support setting the translations folder location',
+    async () => {}
+  );
+  it.todo('should support setting the output folder location', async () => {});
+  it.todo('should support setting a filename override', async () => {});
+  it.todo('should support setting the verbose parameter', async () => {});
+  it.todo('should support setting the quiet parameter', async () => {});
   it('should throw an error if supplied with an unknown parameter', async () => {
     const nonexistingParameter = '-p';
     const cliOutput = await testCli(nonexistingParameter);
@@ -161,12 +167,12 @@ describe('The cli parameters', () => {
 });
 
 describe('The .tkrc.json config file', () => {
-  it('should support setting the i18n folder location', () => {});
-  it('should support setting the translations folder location', () => {});
-  it('should support setting the output folder location', () => {});
-  it('should support setting a filename override', () => {});
-  it('should support setting the quiet parameter', () => {});
-  it('should support setting the verbose parameter', () => {});
+  it.todo('should support setting the i18n folder location', () => {});
+  it.todo('should support setting the translations folder location', () => {});
+  it.todo('should support setting the output folder location', () => {});
+  it.todo('should support setting a filename override', () => {});
+  it.todo('should support setting the quiet parameter', () => {});
+  it.todo('should support setting the verbose parameter', () => {});
 });
 
 async function testCli(parameters?: string | string[]) {
