@@ -6,7 +6,7 @@ import { existsSync, readFileSync } from 'node:fs';
 type configuration = {
   i18nLocation: string;
   translationsLocation: string;
-  output: string;
+  outputDirectory: string;
   filename: string;
   verbose: boolean;
   quiet: boolean;
@@ -25,7 +25,7 @@ function getConfiguration(): configuration {
         type: 'string',
         description: 'Location of the translation json files.',
       },
-      output: {
+      outputDirectory: {
         alias: 'o',
         type: 'string',
         description:
@@ -55,7 +55,7 @@ function getConfiguration(): configuration {
     | {
         i18nLocation: string;
         translationsLocation: string;
-        output: string;
+        outputDirectory: string;
         filename: string;
         verbose: boolean;
         quiet: boolean;
@@ -81,7 +81,7 @@ function getConfiguration(): configuration {
   // Default values
   const defaultI18nLocation = './src/i18n';
   const defaultTranslationsLocation = defaultI18nLocation + '/translations';
-  const defaultOutputLocation = defaultI18nLocation;
+  const defaultOutputDirectory = defaultI18nLocation;
   const defaultFilename = 'translationKeys.ts';
   const defaultVerbose = false;
   const defaultQuiet = false;
@@ -96,16 +96,19 @@ function getConfiguration(): configuration {
     configFile?.translationsLocation ??
     defaultTranslationsLocation;
 
-  let output = cliArgs.output ?? configFile?.output ?? defaultOutputLocation;
+  let outputDirectory =
+    cliArgs.outputDirectory ??
+    configFile?.outputDirectory ??
+    defaultOutputDirectory;
 
   // If the output path is erroneously provided with a filename/ending
   // we remove the filename and display an message informing the user
   // of the correct way to change the filename
   const outputHasFileEnding: RegExp = /^.+\.(.+)$/gm;
-  if (outputHasFileEnding.test(output)) {
+  if (outputHasFileEnding.test(outputDirectory)) {
     const warningText =
-      'Filename detected in output parameter.\n' +
-      'The supplied filename will be ignored and default filename will be used.\n' +
+      'Filename detected in outputDirectory parameter.\n' +
+      'The supplied filename will be ignored and the remaining path will be used.\n' +
       'To output to a different file use the --filename parameter\n' +
       'or set the filename field of the config file';
 
@@ -113,12 +116,12 @@ function getConfiguration(): configuration {
 
     // Finds and removes any filename including the preceding '/'
     const findLastLegOfOutput: RegExp = /([\/][^\/|\n]+\..+)$/gm;
-    output = output.replace(findLastLegOfOutput, '');
+    outputDirectory = outputDirectory.replace(findLastLegOfOutput, '');
 
     // in the case that this leaves output completely empty we fall back
     // to the default output location
-    if (output.length == 0) {
-      output = defaultOutputLocation;
+    if (outputDirectory.length == 0) {
+      outputDirectory = defaultOutputDirectory;
     }
   }
 
@@ -131,7 +134,7 @@ function getConfiguration(): configuration {
   return {
     i18nLocation,
     translationsLocation,
-    output,
+    outputDirectory,
     filename,
     verbose,
     quiet,
