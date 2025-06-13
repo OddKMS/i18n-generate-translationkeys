@@ -29,9 +29,7 @@ vi.mock('node:fs', async () => {
 
   return {
     ...fs,
-    readFileSync: vi.fn(() => {
-      return JSON.stringify(configFileMock);
-    }),
+    readFileSync: vi.fn(),
   };
 });
 
@@ -45,9 +43,15 @@ describe('The configuration helper', () => {
 
   it('should read and return a config from the .tkrc.json config file', () => {
     const fsExistsSyncSpy = vi.spyOn(fsMocked, 'existsSync');
+    const readFileSpy = vi
+      .spyOn(fsMocked, 'readFileSync')
+      .mockImplementationOnce(() => {
+        return JSON.stringify(configFileMock);
+      });
     const configuration = getConfiguration();
 
     expect(fsExistsSyncSpy).toHaveBeenCalledWith(tkrcFilename);
+    expect(readFileSpy).toHaveBeenCalledWith(tkrcFilename, 'utf-8');
     expect(configuration).toMatchObject(configFileMock);
   });
 
@@ -59,16 +63,14 @@ describe('The configuration helper', () => {
           return false;
         }
 
-        // This needs to be here in order to satisfy the type
+        // This needs to be here in order to satisfy the existsSync type
         return true;
       });
 
-    getConfiguration();
+    expect(() => getConfiguration()).not.toThrowError();
 
     expect(fileExistsSpy).toHaveBeenCalledWith(tkrcFilename);
     expect(fileExistsSpy).toHaveReturnedWith(false);
-
-    expect(() => getConfiguration()).not.toThrowError();
   });
 
   it('should throw an error if we cannot read from the config file', () => {
@@ -165,7 +167,7 @@ describe('The configuration helper', () => {
     expect(config.outputDirectory).toBe(configFileDefaults.outputDirectory);
   });
 
-  it.todo('should prioritize cli arguments over the config file', () => {});
+  it('should prioritize cli arguments over the config file', () => {});
 
   it.todo(
     'should return a default config if neither parameters nor config file are supplied',
