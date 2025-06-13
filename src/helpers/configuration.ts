@@ -115,7 +115,7 @@ function getConfiguration(): configuration {
     console.warn(warningText);
 
     // Finds and removes any filename including the preceding '/'
-    const findLastLegOfOutput: RegExp = /([\/][^\/|\n]+\..+)$/gm;
+    const findLastLegOfOutput: RegExp = /([^\/|\n]+\..+)$/gm;
     outputDirectory = outputDirectory.replace(findLastLegOfOutput, '');
 
     // in the case that this leaves output completely empty we fall back

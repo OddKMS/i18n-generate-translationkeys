@@ -84,7 +84,7 @@ describe('The configuration helper', () => {
     expect(readFileSpy).toHaveBeenCalledWith(tkrcFilename, 'utf-8');
   });
 
-  it('should display a warning if the output parameter ends with a filename and ending', async () => {
+  it('should display a warning if the output parameter ends with a filename', async () => {
     const warningText = 'Filename detected in outputDirectory parameter.';
     const outputParameter = '/jeg/er/en/fjompe.nisse';
 
@@ -102,9 +102,35 @@ describe('The configuration helper', () => {
     );
   });
 
-  it('should trim the filename and ending from the outputDirectory parameter if they exist', () => {
-    const outputParameter = '/we/are/the/knights/who/say.vim';
-    const truncatedOutputParameter = '/we/are/the/knights/who';
+  it('should trim any filename and ending from the output parameter', () => {
+    const outputParameter = './kazaa/linkin_park-numb.exe';
+    const truncatedOutputParameter = './kazaa/';
+
+    vi.spyOn(fsMocked, 'readFileSync').mockReturnValueOnce(
+      JSON.stringify({ ...configFileMock, outputDirectory: outputParameter })
+    );
+
+    const config = getConfiguration();
+
+    expect(config.outputDirectory).toBe(truncatedOutputParameter);
+  });
+
+  it('should leave in any trailing backslash provided', () => {
+    const outputParameter = './we/are/the/knights/who/say/vim/';
+    const truncatedOutputParameter = './we/are/the/knights/who/say/vim/';
+
+    vi.spyOn(fsMocked, 'readFileSync').mockReturnValueOnce(
+      JSON.stringify({ ...configFileMock, outputDirectory: outputParameter })
+    );
+
+    const config = getConfiguration();
+
+    expect(config.outputDirectory).toBe(truncatedOutputParameter);
+  });
+
+  it('should not truncate any directory if no trailing backslash is provided', () => {
+    const outputParameter = './through/the/fire/and/the/flames';
+    const truncatedOutputParameter = './through/the/fire/and/the/flames';
 
     vi.spyOn(fsMocked, 'readFileSync').mockReturnValueOnce(
       JSON.stringify({ ...configFileMock, outputDirectory: outputParameter })
@@ -116,7 +142,7 @@ describe('The configuration helper', () => {
   });
 
   it('should replace the output parameter with the default if the trim leaves it empty', () => {
-    const outputParameter = '/naruto_episode_01.divx';
+    const outputParameter = 'naruto_episode_01.divx';
 
     vi.spyOn(fsMocked, 'readFileSync').mockReturnValueOnce(
       JSON.stringify({ ...configFileMock, outputDirectory: outputParameter })
@@ -127,20 +153,17 @@ describe('The configuration helper', () => {
     expect(config.outputDirectory).toBe(configFileDefaults.outputDirectory);
   });
 
-  it.todo(
-    'should replace the output parameter with the default if it is a filename',
-    () => {
-      const outputParameter = 'through_the_fire_and_the_flames.mp3';
+  it('should replace the output parameter with the default if it is a filename', () => {
+    const outputParameter = 'System_of_a_Down-Zelda.mp3';
 
-      vi.spyOn(fsMocked, 'readFileSync').mockReturnValueOnce(
-        JSON.stringify({ ...configFileMock, outputDirectory: outputParameter })
-      );
+    vi.spyOn(fsMocked, 'readFileSync').mockReturnValueOnce(
+      JSON.stringify({ ...configFileMock, outputDirectory: outputParameter })
+    );
 
-      const config = getConfiguration();
+    const config = getConfiguration();
 
-      expect(config.outputDirectory).toBe(configFileDefaults.outputDirectory);
-    }
-  );
+    expect(config.outputDirectory).toBe(configFileDefaults.outputDirectory);
+  });
 
   it.todo('should prioritize cli arguments over the config file', () => {});
 
