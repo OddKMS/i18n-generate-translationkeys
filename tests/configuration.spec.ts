@@ -51,9 +51,9 @@ describe('The configuration helper', () => {
 
     process.argv = process.argv.concat(testParameters);
 
-    const config = getConfiguration();
-
     expect(() => getConfiguration()).not.toThrow();
+
+    const config = getConfiguration();
     expect(config).toMatchObject({
       i18nLocation: './',
       translationsLocation: './',
@@ -272,19 +272,68 @@ describe('The configuration helper', () => {
 });
 
 describe('The cli parameters', () => {
-  it.todo('should support setting the i18n folder location', async () => {});
-  it.todo(
-    'should support setting the translations folder location',
-    async () => {}
-  );
-  it.todo('should support setting the output folder location', async () => {});
-  it.todo('should support setting a filename override', async () => {});
-  it.todo('should support setting the verbose parameter', async () => {});
-  it.todo('should support setting the quiet parameter', async () => {});
-  it('should throw an error if supplied with an unknown parameter', async () => {
-    const nonexistingParameter = '-p';
-    const cliOutput = await testCli(nonexistingParameter);
-    expect(cliOutput.stderr).toContain(`Unknown argument`);
+  it('should support setting the i18n folder location', () => {
+    const testConfigvalue = './i/am/a/happy/little/folder';
+    const testParameters = [`--i18n=${testConfigvalue}`];
+
+    setCliParameters(testParameters);
+
+    const config = getConfiguration();
+
+    expect(config.i18nLocation).toBe(testConfigvalue);
+  });
+
+  it('should support setting the translations folder location', () => {
+    const testConfigvalue = './this/is/my/translation/folder';
+    const testParameters = ['-t', testConfigvalue];
+
+    setCliParameters(testParameters);
+
+    const config = getConfiguration();
+
+    expect(config.translationsLocation).toBe(testConfigvalue);
+  });
+
+  it('should support setting the output folder location', () => {
+    const testConfigvalue = './this/is/my/output/folder';
+    const testParameters = ['-o', testConfigvalue];
+
+    setCliParameters(testParameters);
+
+    const config = getConfiguration();
+
+    expect(config.outputDirectory).toBe(testConfigvalue);
+  });
+
+  it('should support setting a filename override', () => {
+    const testConfigvalue = 'superbadass_filename.ts';
+    const testParameters = ['-f', testConfigvalue];
+
+    setCliParameters(testParameters);
+
+    const config = getConfiguration();
+
+    expect(config.filename).toBe(testConfigvalue);
+  });
+
+  it('should support setting the verbose parameter', () => {
+    const testParameters = ['-v'];
+
+    setCliParameters(testParameters);
+
+    const config = getConfiguration();
+
+    expect(config.verbose).toBe(true);
+  });
+
+  it('should support setting the quiet parameter', () => {
+    const testParameters = ['-q'];
+
+    setCliParameters(testParameters);
+
+    const config = getConfiguration();
+
+    expect(config.quiet).toBe(true);
   });
 });
 
@@ -296,6 +345,10 @@ describe('The .tkrc.json config file', () => {
   it.todo('should support setting the quiet parameter', () => {});
   it.todo('should support setting the verbose parameter', () => {});
 });
+
+function setCliParameters(parameters: string[]) {
+  process.argv = process.argv.concat(parameters);
+}
 
 async function testCli(parameters?: string | string[]) {
   const $$ = $({ nothrow: true, quiet: true });
