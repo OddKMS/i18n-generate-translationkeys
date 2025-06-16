@@ -338,12 +338,102 @@ describe('The cli parameters', () => {
 });
 
 describe('The .tkrc.json config file', () => {
-  it.todo('should support setting the i18n folder location', () => {});
-  it.todo('should support setting the translations folder location', () => {});
-  it.todo('should support setting the output folder location', () => {});
-  it.todo('should support setting a filename override', () => {});
-  it.todo('should support setting the quiet parameter', () => {});
-  it.todo('should support setting the verbose parameter', () => {});
+  it('should support setting the i18n folder location', () => {
+    const testConfigvalue = './i/am/a/happy/little/folder';
+    const testConfigfile = { i18nLocation: testConfigvalue };
+
+    vi.spyOn(fsMocked, 'existsSync').mockImplementationOnce(() => {
+      return true;
+    });
+    vi.spyOn(fsMocked, 'readFileSync').mockImplementationOnce(() => {
+      return JSON.stringify(testConfigfile);
+    });
+
+    const config = getConfiguration();
+
+    expect(config.i18nLocation).toBe(testConfigvalue);
+  });
+
+  it('should support setting the translations folder location', () => {
+    const testConfigvalue = './this/is/my/translation/folder';
+    const testConfigfile = { translationsLocation: testConfigvalue };
+
+    vi.spyOn(fsMocked, 'existsSync').mockImplementationOnce(() => {
+      return true;
+    });
+    vi.spyOn(fsMocked, 'readFileSync').mockImplementationOnce(() => {
+      return JSON.stringify(testConfigfile);
+    });
+
+    const config = getConfiguration();
+
+    expect(config.translationsLocation).toBe(testConfigvalue);
+  });
+
+  it('should support setting the output folder location', () => {
+    const testConfigvalue = './this/is/my/output/folder';
+    const testConfigfile = { outputDirectory: testConfigvalue };
+
+    vi.spyOn(fsMocked, 'existsSync').mockImplementationOnce(() => {
+      return true;
+    });
+    vi.spyOn(fsMocked, 'readFileSync').mockImplementationOnce(() => {
+      return JSON.stringify(testConfigfile);
+    });
+
+    const config = getConfiguration();
+
+    expect(config.outputDirectory).toBe(testConfigvalue);
+  });
+
+  it('should support setting a filename override', () => {
+    const testConfigvalue = 'superbadass_filename.ts';
+    const testConfigfile = { filename: testConfigvalue };
+
+    vi.spyOn(fsMocked, 'existsSync').mockImplementationOnce(() => {
+      return true;
+    });
+    vi.spyOn(fsMocked, 'readFileSync').mockImplementationOnce(() => {
+      return JSON.stringify(testConfigfile);
+    });
+
+    const config = getConfiguration();
+
+    expect(config.filename).toBe(testConfigvalue);
+  });
+
+  it('should support setting the verbose parameter', () => {
+    const testConfigvalue = '-v';
+    const testConfigfile = { verbose: testConfigvalue };
+
+    vi.spyOn(fsMocked, 'existsSync').mockImplementationOnce(() => {
+      return true;
+    });
+    vi.spyOn(fsMocked, 'readFileSync').mockImplementationOnce(() => {
+      return JSON.stringify(testConfigfile);
+      0;
+    });
+
+    const config = getConfiguration();
+
+    expect(config.verbose).toBe(testConfigvalue);
+  });
+
+  it('should support setting the quiet parameter', () => {
+    const testConfigvalue = '-q';
+    const testConfigfile = { quiet: testConfigvalue };
+
+    vi.spyOn(fsMocked, 'existsSync').mockImplementationOnce(() => {
+      return true;
+    });
+    vi.spyOn(fsMocked, 'readFileSync').mockImplementationOnce(() => {
+      return JSON.stringify(testConfigfile);
+    });
+
+    const config = getConfiguration();
+
+    expect(config.quiet).toBe(testConfigvalue);
+  });
 });
 
 function setCliParameters(parameters: string[]) {
