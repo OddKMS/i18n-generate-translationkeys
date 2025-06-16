@@ -51,8 +51,6 @@ function getConfiguration(): configuration {
     .strict()
     .parseSync();
 
-  console.log(cliArgs);
-
   // From config file
   function getConfigFromFile():
     | {
