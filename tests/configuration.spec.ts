@@ -49,7 +49,7 @@ describe('The configuration helper', () => {
   it('should read and accept parameters passed to the cli', async () => {
     const testParameters = ['--i18n=./', '-t', './', '-o', './', '-v'];
 
-    process.argv = process.argv.concat(testParameters);
+    setCliParameters(testParameters);
 
     expect(() => getConfiguration()).not.toThrow();
 
@@ -438,24 +438,4 @@ describe('The .tkrc.json config file', () => {
 
 function setCliParameters(parameters: string[]) {
   process.argv = process.argv.concat(parameters);
-}
-
-async function testCli(parameters?: string | string[]) {
-  const $$ = $({ nothrow: true, quiet: true });
-
-  const unpackParams = () => {
-    if (Array.isArray(parameters)) {
-      return parameters.join(' ');
-    } else {
-      return parameters;
-    }
-  };
-
-  const params = unpackParams();
-
-  if (params) {
-    return $$`node ./bin.ts ${params}`;
-  } else {
-    return $$`node ./bin.ts`;
-  }
 }
