@@ -24,17 +24,17 @@ const configFileDefaults = {
   quiet: false,
 };
 
+// For the purposes of these tests, the default state is that
+// the config file does not exist.
+// That way we start from a "blank slate" every time.
 vi.mock('node:fs', async () => {
   const fs = await vi.importActual('node:fs');
 
   return {
     ...fs,
-    existsSync: vi.fn((path) => {
-      if (path == configFilename) {
-        return true;
-      }
+    existsSync: vi.fn(() => {
+      return false;
     }),
-    readFileSync: vi.fn(),
   };
 });
 
@@ -47,14 +47,30 @@ afterEach(() => {
 
 describe('The configuration helper', () => {
   it('should read and accept parameters passed to the cli', async () => {
-    const testParameter = '--i18n=./ -t ./ -o ./ -v';
-    const cliOutput = await testCli(testParameter);
+    const testParameters = ['--i18n=./', '-t', './', '-o', './', '-v'];
 
-    expect(cliOutput.exitCode).toBe(0);
+    process.argv = process.argv.concat(testParameters);
+
+    const config = getConfiguration();
+
+    expect(() => getConfiguration()).not.toThrow();
+    expect(config).toMatchObject({
+      i18nLocation: './',
+      translationsLocation: './',
+      outputDirectory: './',
+      filename: configFileDefaults.filename,
+      verbose: true,
+      quiet: configFileDefaults.quiet,
+    });
   });
 
   it('should read and return a config from the .tkrc.json config file', () => {
-    const fileExistsSpy = vi.spyOn(fsMocked, 'existsSync');
+    const fileExistsSpy = vi
+      .spyOn(fsMocked, 'existsSync')
+      .mockImplementationOnce(() => {
+        return true;
+      });
+
     const readFileSpy = vi
       .spyOn(fsMocked, 'readFileSync')
       .mockImplementationOnce(() => {
@@ -70,13 +86,8 @@ describe('The configuration helper', () => {
   it('should not throw an error if a config file does not exist', () => {
     const fileExistsSpy = vi
       .spyOn(fsMocked, 'existsSync')
-      .mockImplementationOnce((path) => {
-        if (path == configFilename) {
-          return false;
-        }
-
-        // This needs to be here in order to satisfy the existsSync type
-        return true;
+      .mockImplementationOnce(() => {
+        return false;
       });
 
     expect(() => getConfiguration()).not.toThrowError();
@@ -88,6 +99,12 @@ describe('The configuration helper', () => {
   it('should throw an error if we cannot read from the config file', () => {
     const testErrorMessage = 'Could not read from .tkrc.json';
 
+    const fileExistsSpy = vi
+      .spyOn(fsMocked, 'existsSync')
+      .mockImplementationOnce(() => {
+        return true;
+      });
+
     const readFileSpy = vi
       .spyOn(fsMocked, 'readFileSync')
       .mockImplementationOnce(() => {
@@ -95,12 +112,17 @@ describe('The configuration helper', () => {
       });
 
     expect(() => getConfiguration()).toThrowError(testErrorMessage);
+    expect(fileExistsSpy).toHaveBeenCalled();
     expect(readFileSpy).toHaveBeenCalledWith(configFilename, 'utf-8');
   });
 
   it('should display a warning if the output parameter ends with a filename', () => {
     const warningText = 'Filename detected in outputDirectory parameter:';
     const outputParameter = '/jeg/er/en/fjompe.nisse';
+
+    vi.spyOn(fsMocked, 'existsSync').mockImplementationOnce(() => {
+      return true;
+    });
 
     vi.spyOn(fsMocked, 'readFileSync').mockReturnValueOnce(
       JSON.stringify({ ...configFileMock, outputDirectory: outputParameter })
@@ -122,6 +144,10 @@ describe('The configuration helper', () => {
     const outputParameter = './kazaa/linkin_park-numb.exe';
     const truncatedOutputParameter = './kazaa/';
 
+    vi.spyOn(fsMocked, 'existsSync').mockImplementationOnce(() => {
+      return true;
+    });
+
     vi.spyOn(fsMocked, 'readFileSync').mockReturnValueOnce(
       JSON.stringify({ ...configFileMock, outputDirectory: outputParameter })
     );
@@ -134,6 +160,10 @@ describe('The configuration helper', () => {
   it('should leave in any trailing backslash provided', () => {
     const outputParameter = './we/are/the/knights/who/say/vim/';
     const truncatedOutputParameter = './we/are/the/knights/who/say/vim/';
+
+    vi.spyOn(fsMocked, 'existsSync').mockImplementationOnce(() => {
+      return true;
+    });
 
     vi.spyOn(fsMocked, 'readFileSync').mockReturnValueOnce(
       JSON.stringify({ ...configFileMock, outputDirectory: outputParameter })
@@ -148,6 +178,10 @@ describe('The configuration helper', () => {
     const outputParameter = './through/the/fire/and/the/flames';
     const truncatedOutputParameter = './through/the/fire/and/the/flames';
 
+    vi.spyOn(fsMocked, 'existsSync').mockImplementationOnce(() => {
+      return true;
+    });
+
     vi.spyOn(fsMocked, 'readFileSync').mockReturnValueOnce(
       JSON.stringify({ ...configFileMock, outputDirectory: outputParameter })
     );
@@ -159,6 +193,10 @@ describe('The configuration helper', () => {
 
   it('should replace the output parameter with the default if the trim leaves it empty', () => {
     const outputParameter = 'naruto_episode_01.divx';
+
+    vi.spyOn(fsMocked, 'existsSync').mockImplementationOnce(() => {
+      return true;
+    });
 
     vi.spyOn(fsMocked, 'readFileSync').mockReturnValueOnce(
       JSON.stringify({ ...configFileMock, outputDirectory: outputParameter })
@@ -172,6 +210,10 @@ describe('The configuration helper', () => {
   it('should replace the output parameter with the default if it is a filename', () => {
     const outputParameter = 'System_of_a_Down-Zelda.mp3';
 
+    vi.spyOn(fsMocked, 'existsSync').mockImplementationOnce(() => {
+      return true;
+    });
+
     vi.spyOn(fsMocked, 'readFileSync').mockReturnValueOnce(
       JSON.stringify({ ...configFileMock, outputDirectory: outputParameter })
     );
@@ -182,7 +224,11 @@ describe('The configuration helper', () => {
   });
 
   it('should prioritize cli arguments over the config file', async () => {
-    const fileExistsSpy = vi.spyOn(fsMocked, 'existsSync');
+    const fileExistsSpy = vi
+      .spyOn(fsMocked, 'existsSync')
+      .mockImplementationOnce(() => {
+        return true;
+      });
     const readFileSpy = vi
       .spyOn(fsMocked, 'readFileSync')
       .mockImplementationOnce(() => {
@@ -202,6 +248,7 @@ describe('The configuration helper', () => {
     const config = getConfiguration();
 
     expect(fileExistsSpy).toHaveBeenCalledWith(configFilename);
+    expect(fileExistsSpy).toHaveReturnedWith(true);
     expect(readFileSpy).toHaveBeenCalledWith(configFilename, 'utf-8');
 
     expect(config.translationsLocation).toBe('./cli/parameters/are/a/pain');
