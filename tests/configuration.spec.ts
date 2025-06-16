@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { getConfiguration } from '#helpers';
 import * as fsMocked from 'node:fs';
 import { $ } from 'zx';
@@ -36,6 +36,13 @@ vi.mock('node:fs', async () => {
     }),
     readFileSync: vi.fn(),
   };
+});
+
+const originalArgv = process.argv;
+
+// Restore argv after each test to make CLI tests consistent
+afterEach(() => {
+  process.argv = originalArgv;
 });
 
 describe('The configuration helper', () => {
@@ -206,10 +213,15 @@ describe('The configuration helper', () => {
     expect(config.outputDirectory).not.toBe(configFileMock.outputDirectory);
   });
 
-  it.todo(
-    'should return a default config if neither parameters nor config file are supplied',
-    () => {}
-  );
+  it('should return a default config if neither parameters nor config file are supplied', () => {
+    vi.spyOn(fsMocked, 'existsSync').mockImplementationOnce(() => {
+      return false;
+    });
+
+    const config = getConfiguration();
+
+    expect(config).toMatchObject(configFileDefaults);
+  });
 });
 
 describe('The cli parameters', () => {
