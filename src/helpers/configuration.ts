@@ -17,6 +17,7 @@ function getConfiguration(): configuration {
   const cliArgs = yargs(hideBin(process.argv))
     .options({
       i18nLocation: {
+        alias: 'i18n',
         type: 'string',
         description: 'i18n folder in your project',
       },
@@ -49,6 +50,8 @@ function getConfiguration(): configuration {
     })
     .strict()
     .parseSync();
+
+  console.log(cliArgs);
 
   // From config file
   function getConfigFromFile():
@@ -104,10 +107,12 @@ function getConfiguration(): configuration {
   // If the output path is erroneously provided with a filename/ending
   // we remove the filename and display an message informing the user
   // of the correct way to change the filename
-  const outputHasFileEnding: RegExp = /^.+\.(.+)$/gm;
+  const outputHasFileEnding: RegExp = /^[^\s].+\.(.+)$/gm;
   if (outputHasFileEnding.test(outputDirectory)) {
     const warningText =
-      'Filename detected in outputDirectory parameter.\n' +
+      'Filename detected in outputDirectory parameter:\n' +
+      outputDirectory +
+      '\n' +
       'The supplied filename will be ignored and the remaining path will be used.\n' +
       'To output to a different file use the --filename parameter\n' +
       'or set the filename field of the config file';

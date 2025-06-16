@@ -4,7 +4,7 @@ import * as fsMocked from 'node:fs';
 import { $ } from 'zx';
 import { error } from 'node:console';
 
-const tkrcFilename = '.tkrc.json';
+const configFilename = '.tkrc.json';
 
 const configFileMock = {
   i18nLocation: './testFolder',
@@ -29,20 +29,25 @@ vi.mock('node:fs', async () => {
 
   return {
     ...fs,
+    existsSync: vi.fn((path) => {
+      if (path == configFilename) {
+        return true;
+      }
+    }),
     readFileSync: vi.fn(),
   };
 });
 
 describe('The configuration helper', () => {
-  it('should read and accept parameters passed from the cli', async () => {
-    const testParameter = '-v';
+  it('should read and accept parameters passed to the cli', async () => {
+    const testParameter = '--i18n=./ -t ./ -o ./ -v';
     const cliOutput = await testCli(testParameter);
 
     expect(cliOutput.exitCode).toBe(0);
   });
 
   it('should read and return a config from the .tkrc.json config file', () => {
-    const fsExistsSyncSpy = vi.spyOn(fsMocked, 'existsSync');
+    const fileExistsSpy = vi.spyOn(fsMocked, 'existsSync');
     const readFileSpy = vi
       .spyOn(fsMocked, 'readFileSync')
       .mockImplementationOnce(() => {
@@ -50,8 +55,8 @@ describe('The configuration helper', () => {
       });
     const configuration = getConfiguration();
 
-    expect(fsExistsSyncSpy).toHaveBeenCalledWith(tkrcFilename);
-    expect(readFileSpy).toHaveBeenCalledWith(tkrcFilename, 'utf-8');
+    expect(fileExistsSpy).toHaveBeenCalledWith(configFilename);
+    expect(readFileSpy).toHaveBeenCalledWith(configFilename, 'utf-8');
     expect(configuration).toMatchObject(configFileMock);
   });
 
@@ -59,7 +64,7 @@ describe('The configuration helper', () => {
     const fileExistsSpy = vi
       .spyOn(fsMocked, 'existsSync')
       .mockImplementationOnce((path) => {
-        if (path == tkrcFilename) {
+        if (path == configFilename) {
           return false;
         }
 
@@ -69,7 +74,7 @@ describe('The configuration helper', () => {
 
     expect(() => getConfiguration()).not.toThrowError();
 
-    expect(fileExistsSpy).toHaveBeenCalledWith(tkrcFilename);
+    expect(fileExistsSpy).toHaveBeenCalledWith(configFilename);
     expect(fileExistsSpy).toHaveReturnedWith(false);
   });
 
@@ -83,11 +88,11 @@ describe('The configuration helper', () => {
       });
 
     expect(() => getConfiguration()).toThrowError(testErrorMessage);
-    expect(readFileSpy).toHaveBeenCalledWith(tkrcFilename, 'utf-8');
+    expect(readFileSpy).toHaveBeenCalledWith(configFilename, 'utf-8');
   });
 
-  it('should display a warning if the output parameter ends with a filename', async () => {
-    const warningText = 'Filename detected in outputDirectory parameter.';
+  it('should display a warning if the output parameter ends with a filename', () => {
+    const warningText = 'Filename detected in outputDirectory parameter:';
     const outputParameter = '/jeg/er/en/fjompe.nisse';
 
     vi.spyOn(fsMocked, 'readFileSync').mockReturnValueOnce(
@@ -102,6 +107,8 @@ describe('The configuration helper', () => {
     expect(consoleWarningSpy).toHaveBeenCalledWith(
       expect.stringContaining(warningText)
     );
+
+    consoleWarningSpy.mockRestore();
   });
 
   it('should trim any filename and ending from the output parameter', () => {
@@ -167,14 +174,42 @@ describe('The configuration helper', () => {
     expect(config.outputDirectory).toBe(configFileDefaults.outputDirectory);
   });
 
-  it('should prioritize cli arguments over the config file', () => {});
+  it('should prioritize cli arguments over the config file', async () => {
+    const fileExistsSpy = vi.spyOn(fsMocked, 'existsSync');
+    const readFileSpy = vi
+      .spyOn(fsMocked, 'readFileSync')
+      .mockImplementationOnce(() => {
+        return JSON.stringify(configFileMock);
+      });
+
+    const testParameters = [
+      '-t',
+      './cli/parameters/are/a/pain',
+      '-o',
+      './cli/argument/test',
+      '-v',
+    ];
+
+    process.argv = process.argv.concat(testParameters);
+
+    const config = getConfiguration();
+
+    expect(fileExistsSpy).toHaveBeenCalledWith(configFilename);
+    expect(readFileSpy).toHaveBeenCalledWith(configFilename, 'utf-8');
+
+    expect(config.translationsLocation).toBe('./cli/parameters/are/a/pain');
+    expect(config.translationsLocation).not.toBe(
+      configFileMock.translationsLocation
+    );
+
+    expect(config.outputDirectory).toBe('./cli/argument/test');
+    expect(config.outputDirectory).not.toBe(configFileMock.outputDirectory);
+  });
 
   it.todo(
     'should return a default config if neither parameters nor config file are supplied',
     () => {}
   );
-
-  vi.clearAllMocks();
 });
 
 describe('The cli parameters', () => {
