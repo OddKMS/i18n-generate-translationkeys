@@ -6,13 +6,13 @@ import generate from '#generate-keys';
 
 describe('the generate-translationkeys script', () => {
   it('should get a configuration detailing runtime operation', () => {
-    const spy = vi.spyOn(configurationSpy, 'getConfiguration');
+    const configSpy = vi.spyOn(configurationSpy, 'getConfiguration');
 
     generateKeys();
 
-    expect(spy).toHaveBeenCalledOnce();
+    expect(configSpy).toHaveBeenCalledOnce();
 
-    const spyConfigResult = spy.mock.results[0];
+    const spyConfigResult = configSpy.mock.results[0];
 
     // Supress error ts(2344) since we're checking against an unknown type
     // @ts-ignore
