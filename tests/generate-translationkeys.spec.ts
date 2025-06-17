@@ -1,18 +1,33 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, expectTypeOf, it, vi } from 'vitest';
+import { configuration } from '#types';
+import * as configurationSpy from '#helpers';
 import * as generatorSpy from '#generate-keys';
 import generate from '#generate-keys';
 
 describe('the generate-translationkeys script', () => {
+  it('should get a configuration detailing runtime operation', () => {
+    const spy = vi.spyOn(configurationSpy, 'getConfiguration');
+
+    generateKeys();
+
+    expect(spy).toHaveBeenCalledOnce();
+
+    const spyConfigResult = spy.mock.results[0];
+
+    expectTypeOf(spyConfigResult.value).toMatchObjectType<configuration>();
+  });
+
+  it.todo('should accept a configuration object as parameter', () => {});
+
   it.todo(
-    'should have default values for those set by the config file',
-    () => {},
+    'should prioritize the configuration object over config from CLI or file',
+    () => {}
   );
-  it.todo('should read configuration values from file', () => {});
 
   it('should read i18n translations files', () => {
     const spy = vi.spyOn(generatorSpy, 'default');
 
-    generate_keys();
+    generateKeys();
 
     expect(spy).toHaveBeenCalledOnce();
   });
@@ -20,6 +35,6 @@ describe('the generate-translationkeys script', () => {
   it.todo('should output a file containing json paths as keys', () => {});
 });
 
-function generate_keys(params?: any) {
+function generateKeys(params?: any) {
   generate();
 }

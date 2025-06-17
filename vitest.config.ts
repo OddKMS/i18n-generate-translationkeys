@@ -5,6 +5,7 @@ import path from 'path';
 export default defineConfig({
   resolve: {
     alias: {
+      '#types': path.resolve(__dirname, './src/types'),
       '#helpers': path.resolve(__dirname, './src/helpers'),
       '#generate-keys': path.resolve(
         __dirname,

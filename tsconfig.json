@@ -4,11 +4,13 @@
     "composite": true,
     "baseUrl": ".",
     "noEmit": true,
+    "strict": true,
     "allowImportingTsExtensions": true,
     "paths": {
+      "#types": ["./src/types/index.ts"],
       "#helpers": ["./src/helpers/index.ts"],
       "#generate-keys": ["./src/generate-translationkeys.ts"]
     }
   },
-  "include": ["./bin.ts", "src/**/*", "vitest.config.ts"]
+  "include": ["./bin.ts", "./src/**/*", "./tests/**/*", "vitest.config.ts"]
 }

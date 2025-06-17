@@ -2,15 +2,7 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { existsSync, readFileSync } from 'node:fs';
-
-type configuration = {
-  i18nLocation: string;
-  translationsLocation: string;
-  outputDirectory: string;
-  filename: string;
-  verbose: boolean;
-  quiet: boolean;
-};
+import type { configuration } from '#types';
 
 function getConfiguration(): configuration {
   // CLI Arguments

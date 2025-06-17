@@ -3,15 +3,6 @@ import * as path from 'path';
 import * as jq from 'node-jq';
 import { getConfiguration } from '#helpers';
 
-const {
-  i18nLocation,
-  translationsLocation,
-  output,
-  filenameOverride,
-  verbose,
-  quiet,
-} = getConfiguration();
-
 const readFiles = () => {
   //  Create a union of the different translation files.
   //  This way, we don't miss out on any keys that may have been added
@@ -25,22 +16,31 @@ const readFiles = () => {
   // const translations = jq -s  $translation_files
 };
 
-const generate = () => {
+const generateKeys = () => {
+  const {
+    i18nLocation,
+    translationsLocation,
+    outputDirectory,
+    filename,
+    verbose,
+    quiet,
+  } = getConfiguration();
+
   if (verbose) {
     console.log(
       '--------------------------------------------------------------'
     );
-    console.log('Running script with the following config:');
+    console.log('Running script with the following configuration:');
     console.log(
       '--------------------------------------------------------------'
     );
     console.log('i18n location:     ', i18nLocation);
     console.log('translations:      ', translationsLocation);
-    console.log('output:            ', output);
-    console.log('filename override: ', filenameOverride);
+    console.log('output:            ', outputDirectory);
+    console.log('filename:          ', filename);
     console.log('verbose:           ', verbose);
     console.log('quiet:             ', quiet);
   }
 };
 
-export default generate;
+export default generateKeys;
