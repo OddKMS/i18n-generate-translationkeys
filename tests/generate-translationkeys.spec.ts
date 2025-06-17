@@ -14,6 +14,8 @@ describe('the generate-translationkeys script', () => {
 
     const spyConfigResult = spy.mock.results[0];
 
+    // Supress error ts(2344) since we're checking against an unknown type
+    // @ts-ignore
     expectTypeOf(spyConfigResult.value).toMatchObjectType<configuration>();
   });
 
