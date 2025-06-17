@@ -1,1 +1,1 @@
-export { getConfiguration } from './configuration.ts';
+export { getConfiguration, configFileDefaults } from './configuration.ts';

@@ -2,6 +2,7 @@ import { $ } from 'zx';
 import * as path from 'path';
 import * as jq from 'node-jq';
 import { getConfiguration } from '#helpers';
+import { configuration } from '#types';
 
 const readFiles = () => {
   //  Create a union of the different translation files.
@@ -16,7 +17,7 @@ const readFiles = () => {
   // const translations = jq -s  $translation_files
 };
 
-const generateKeys = () => {
+const generateKeys = (config?: configuration) => {
   const {
     i18nLocation,
     translationsLocation,
@@ -24,7 +25,7 @@ const generateKeys = () => {
     filename,
     verbose,
     quiet,
-  } = getConfiguration();
+  } = config ?? getConfiguration();
 
   if (verbose) {
     console.log(

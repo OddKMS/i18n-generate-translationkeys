@@ -1,8 +1,10 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { getConfiguration } from '#helpers';
+import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
+import { getConfiguration, configFileDefaults } from '#helpers';
+import * as configurationHelper from '#helpers';
 import * as fsMocked from 'node:fs';
 import { $ } from 'zx';
 import { error } from 'node:console';
+import type { configuration } from '#types';
 
 const configFilename = '.tkrc.json';
 
@@ -12,15 +14,6 @@ const configFileMock = {
   outputDirectory: './testOutput',
   filename: 'testfile.ts',
   verbose: true,
-  quiet: false,
-};
-
-const configFileDefaults = {
-  i18nLocation: './src/i18n',
-  translationsLocation: './src/i18n/translations',
-  outputDirectory: './src/i18n',
-  filename: 'translationKeys.ts',
-  verbose: false,
   quiet: false,
 };
 
@@ -268,6 +261,26 @@ describe('The configuration helper', () => {
     const config = getConfiguration();
 
     expect(config).toMatchObject(configFileDefaults);
+  });
+
+  it('should export an object of the config defaults so that they are easy to verify against', () => {
+    expect(configurationHelper).toHaveProperty('configFileDefaults');
+
+    const configDefaults = configurationHelper.configFileDefaults;
+
+    expect(
+      configDefaults,
+      'Config defaults should not be undefined'
+    ).not.toBeUndefined();
+
+    expectTypeOf(configDefaults).toMatchObjectType<configuration>();
+
+    expect(configDefaults).toHaveProperty('i18nLocation');
+    expect(configDefaults).toHaveProperty('translationsLocation');
+    expect(configDefaults).toHaveProperty('outputDirectory');
+    expect(configDefaults).toHaveProperty('filename');
+    expect(configDefaults).toHaveProperty('verbose');
+    expect(configDefaults).toHaveProperty('quiet');
   });
 });
 

@@ -4,6 +4,15 @@ import { hideBin } from 'yargs/helpers';
 import { existsSync, readFileSync } from 'node:fs';
 import type { configuration } from '#types';
 
+const configFileDefaults: configuration = {
+  i18nLocation: './src/i18n',
+  translationsLocation: './src/i18n/translations',
+  outputDirectory: './src/i18n',
+  filename: 'translationKeys.ts',
+  verbose: false,
+  quiet: false,
+};
+
 function getConfiguration(): configuration {
   // CLI Arguments
   const cliArgs = yargs(hideBin(process.argv))
@@ -136,4 +145,4 @@ function getConfiguration(): configuration {
   };
 }
 
-export { getConfiguration };
+export { getConfiguration, configFileDefaults };
