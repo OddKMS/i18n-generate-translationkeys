@@ -66,9 +66,16 @@ describe('the generate-translationkeys script', () => {
 
     // Configuration
     expect(configSpy).not.toHaveBeenCalled();
+    expect(configSpy).not.toHaveReturnedWith(mockConfigFile);
 
     // Key Generation
     expect(genKeySpy).toHaveBeenCalledWith(configParameterObject);
+    expect(genKeySpy).not.toHaveReturnedWith(
+      expect.objectContaining({ config: mockConfigFile })
+    );
+    expect(genKeySpy).toHaveReturnedWith(
+      expect.objectContaining({ config: configParameterObject })
+    );
 
     expect(keys.config).toMatchObject(configParameterObject);
   });
