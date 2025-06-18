@@ -46,6 +46,10 @@ const generateKeys = (config?: configuration) => {
   TUIVerbose('filename:          ', filename);
   TUIVerbose('verbose:           ', verbose);
   TUIVerbose('quiet:             ', quiet);
+
+  const translationKeys = outputDirectory + '/' + filename;
+
+  return { translationKeys, config };
 };
 
 export default generateKeys;
