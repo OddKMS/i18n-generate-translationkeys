@@ -4,19 +4,6 @@ import * as jq from 'node-jq';
 import { getConfiguration } from '#helpers';
 import { configuration } from '#types';
 
-const readFiles = () => {
-  //  Create a union of the different translation files.
-  //  This way, we don't miss out on any keys that may have been added
-  //  to one of the languages but not the other.
-  //
-  //  The translated texts will be combined willy-nilly,
-  //  but we only care about the keys so that is acceptable.
-  const filesFilter = 'reduce .[] as $obj ({}; . * $obj)';
-  const translationFiles = '';
-
-  // const translations = jq -s  $translation_files
-};
-
 const generateKeys = (config?: configuration) => {
   const {
     i18nLocation,
@@ -27,21 +14,38 @@ const generateKeys = (config?: configuration) => {
     quiet,
   } = config ?? getConfiguration();
 
-  if (verbose) {
-    console.log(
-      '--------------------------------------------------------------'
-    );
-    console.log('Running script with the following configuration:');
-    console.log(
-      '--------------------------------------------------------------'
-    );
-    console.log('i18n location:     ', i18nLocation);
-    console.log('translations:      ', translationsLocation);
-    console.log('output:            ', outputDirectory);
-    console.log('filename:          ', filename);
-    console.log('verbose:           ', verbose);
-    console.log('quiet:             ', quiet);
+  function TUIOutput(outputText: string, ...variables: any[]) {
+    return console.log(outputText, ...variables);
   }
+
+  function TUIVerbose(outputText: string, ...variables: any[]) {
+    return verbose && console.log(outputText, ...variables);
+  }
+
+  const readFiles = () => {
+    //  Create a union of the different translation files.
+    //  This way, we don't miss out on any keys that may have been added
+    //  to one of the languages but not the other.
+    //
+    //  The translated texts will be combined willy-nilly,
+    //  but we only care about the keys so that is acceptable.
+    const filesFilter = 'reduce .[] as $obj ({}; . * $obj)';
+    const translationFiles = '';
+
+    // const translations = jq -s  $translation_files
+  };
+
+  TUIOutput('Generating TranslationKeys object, please wait...');
+
+  TUIVerbose('----------------------------------------------------');
+  TUIVerbose('| Running script with the following configuration: |');
+  TUIVerbose('----------------------------------------------------');
+  TUIVerbose('i18n location:     ', i18nLocation);
+  TUIVerbose('translations:      ', translationsLocation);
+  TUIVerbose('output:            ', outputDirectory);
+  TUIVerbose('filename:          ', filename);
+  TUIVerbose('verbose:           ', verbose);
+  TUIVerbose('quiet:             ', quiet);
 };
 
 export default generateKeys;
