@@ -2,9 +2,9 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { existsSync, readFileSync } from 'node:fs';
-import type { configuration } from '#types';
+import type { Configuration } from '#types';
 
-const configFileDefaults: configuration = {
+const configFileDefaults: Configuration = {
   i18nLocation: './src/i18n',
   translationsLocation: './src/i18n/translations',
   outputDirectory: './src/i18n',
@@ -13,7 +13,7 @@ const configFileDefaults: configuration = {
   quiet: false,
 };
 
-function getConfiguration(): configuration {
+function getConfiguration(): Configuration {
   // CLI Arguments
   const cliArgs = yargs(hideBin(process.argv))
     .options({

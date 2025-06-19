@@ -16,11 +16,14 @@
     "i18n-generate-translationkeys": "bin.ts"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.8.0",
     "@tsconfig/node24": "^24.0.1",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.15.23",
     "@types/yargs": "^17.0.33",
     "@vitest/coverage-v8": "^3.1.4",
+    "factory.ts": "^1.4.2",
+    "memfs": "^4.17.2",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",

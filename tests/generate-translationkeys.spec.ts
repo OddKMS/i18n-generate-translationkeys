@@ -1,8 +1,10 @@
-import { describe, expect, expectTypeOf, it, vi } from 'vitest';
-import { configuration } from '#types';
+import generateKeys, * as generatorSpy from '#generate-keys';
+
 import * as configurationSpy from '#helpers';
-import * as generatorSpy from '#generate-keys';
-import generateKeys from '#generate-keys';
+import { getConfiguration, configFileDefaults } from '#helpers';
+import { Configuration } from '#types';
+import { describe, expect, expectTypeOf, it, vi } from 'vitest';
+import { generateTestData } from './data/testData.ts';
 
 describe('the generate-translationkeys script', () => {
   it('should get a configuration detailing runtime operation if no config is supplied', () => {
@@ -16,13 +18,13 @@ describe('the generate-translationkeys script', () => {
 
     // Supress error ts(2344) since we're checking against an unknown type
     // @ts-ignore
-    expectTypeOf(spyConfigResult.value).toMatchObjectType<configuration>();
+    expectTypeOf(spyConfigResult.value).toMatchObjectType<Configuration>();
   });
 
   it('should accept a configuration object as parameter', () => {
     const genKeySpy = vi.spyOn(generatorSpy, 'default');
 
-    const configParameterObject: configuration = {
+    const configParameterObject: Configuration = {
       i18nLocation: './mockLocation',
       translationsLocation: './lockMocation',
       outputDirectory: './locomotion',
@@ -37,7 +39,7 @@ describe('the generate-translationkeys script', () => {
   });
 
   it('should prioritize the configuration object over config from CLI or file', () => {
-    const mockConfigFile: configuration = {
+    const mockConfigFile: Configuration = {
       i18nLocation: './sällskapsresan',
       translationsLocation: './snowroller',
       outputDirectory: './segelsällskapsresan',
@@ -53,7 +55,7 @@ describe('the generate-translationkeys script', () => {
         return mockConfigFile;
       });
 
-    const configParameterObject: configuration = {
+    const configParameterObject: Configuration = {
       i18nLocation: './warcraft-iii',
       translationsLocation: './red-alert',
       outputDirectory: './empire-earth',
@@ -77,15 +79,27 @@ describe('the generate-translationkeys script', () => {
       expect.objectContaining({ config: configParameterObject })
     );
 
+    // Output verification
     expect(keys.config).toMatchObject(configParameterObject);
   });
 
   it('should read i18n translations files', () => {
+    vi.spyOn(configurationSpy, 'getConfiguration').mockImplementationOnce(
+      () => {
+        return configFileDefaults;
+      }
+    );
+
+    const config = getConfiguration();
+
+    const testData = generateTestData(config, 42);
+
     const spy = vi.spyOn(generatorSpy, 'default');
 
     generateKeys();
 
     expect(spy).toHaveBeenCalledOnce();
+    expect.fail();
   });
 
   it.todo('should output a file containing json paths as keys', () => {});

@@ -2,9 +2,8 @@ import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
 import { getConfiguration, configFileDefaults } from '#helpers';
 import * as configurationHelper from '#helpers';
 import * as fsMocked from 'node:fs';
-import { $ } from 'zx';
 import { error } from 'node:console';
-import type { configuration } from '#types';
+import type { Configuration } from '#types';
 
 const configFilename = '.tkrc.json';
 
@@ -273,7 +272,7 @@ describe('The configuration helper', () => {
       'Config defaults should not be undefined'
     ).not.toBeUndefined();
 
-    expectTypeOf(configDefaults).toMatchObjectType<configuration>();
+    expectTypeOf(configDefaults).toMatchObjectType<Configuration>();
 
     expect(configDefaults).toHaveProperty('i18nLocation');
     expect(configDefaults).toHaveProperty('translationsLocation');

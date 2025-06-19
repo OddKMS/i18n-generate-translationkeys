@@ -2,9 +2,9 @@ import { $ } from 'zx';
 import * as path from 'path';
 import * as jq from 'node-jq';
 import { getConfiguration } from '#helpers';
-import { configuration } from '#types';
+import { Configuration } from '#types';
 
-const generateKeys = (config?: configuration) => {
+const generateKeys = (config?: Configuration) => {
   const {
     i18nLocation,
     translationsLocation,
