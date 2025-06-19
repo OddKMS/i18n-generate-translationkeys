@@ -15,6 +15,7 @@ import { getConfiguration } from '#helpers';
 import { configuration } from '#types';
 import { vol } from 'memfs';
 import { describe, expect, expectTypeOf, it, vi } from 'vitest';
+import { object } from 'yup';
 
 describe('the generate-translationkeys script', () => {
   it('should get a configuration detailing runtime operation if no config is supplied', () => {
@@ -149,42 +150,80 @@ describe('the generate-translationkeys script', () => {
     function buildTestTranslations(
       fakerInstance: Faker,
       keyList: string[],
-      randomizer: Randomizer,
-      textOrNestedTranslation?: string | Translation
+      randomizer: Randomizer
     ) {
-      if (typeof textOrNestedTranslation === 'string') {
-        return textOrNestedTranslation;
+      function recursiveGenerateTestTranslation(
+        fakerInstance: Faker,
+        keyList: string[],
+        randomizer: Randomizer,
+        textOrNestedTranslation?: string | Translation
+      ) {
+        if (typeof textOrNestedTranslation === 'string') {
+          return textOrNestedTranslation;
+        }
+
+        // We only continue the recursion as long as there are keys remaining
+        // to map out
+        if (keyList.length >= 1) {
+          const nextDecider = randomizer.next();
+
+          if (nextDecider >= 0.5) {
+            // The next call will exit the recursion
+            const text = fakerInstance.word.words({
+              count: { min: 2, max: 10 },
+            });
+            return recursiveGenerateTestTranslation(
+              fakerInstance,
+              keyList,
+              randomizer,
+              text
+            );
+          } else {
+            // The next call will continue the recrusion
+            const nextKey = keyList.shift() as string;
+
+            const nextTranslation: Translation = {
+              key: nextKey,
+              value: recursiveGenerateTestTranslation(
+                fakerInstance,
+                keyList,
+                randomizer
+              ),
+            };
+
+            return nextTranslation;
+          }
+        } else {
+          // We ran out of keys
+          return fakerInstance.word.words({ count: { min: 2, max: 10 } });
+        }
       }
 
-      // We only continue the recursion as long as there are keys remaining
-      // to map out
-      if (keyList.length >= 1) {
-        const nextDecider = randomizer.next();
+      let translationList: Translation[] = [];
 
-        if (nextDecider >= 0.5) {
-          // The next call will exit the recursion
-          const text = fakerInstance.word.words({ count: { min: 2, max: 10 } });
-          return buildTestTranslations(
+      while (keyList.length > 0) {
+        const thisKey = keyList.shift() as string;
+
+        translationList.push({
+          key: thisKey,
+          value: recursiveGenerateTestTranslation(
             fakerInstance,
             keyList,
-            randomizer,
-            text
-          );
-        } else {
-          // The next call will continue the recrusion
-          const nextKey = keyList.shift() as string;
-
-          const nextTranslation: Translation = {
-            key: nextKey,
-            value: buildTestTranslations(fakerInstance, keyList, randomizer),
-          };
-
-          return nextTranslation;
-        }
-      } else {
-        // We ran out of keys
-        return fakerInstance.word.words({ count: { min: 2, max: 10 } });
+            randomizer
+          ),
+        });
       }
+
+      // Almost there!
+      translationList.reduce(
+        (accumulator: { [key: string]: string }, translation) => {
+          accumulator[translation.key] = translation.value;
+          return accumulator;
+        },
+        {}
+      );
+
+      return translationList;
     }
 
     let norwegianTranslationKeys = testTranslationKeys();
@@ -204,8 +243,6 @@ describe('the generate-translationkeys script', () => {
     // };
 
     // vol.fromJSON(testData);
-
-    console.log(vol.toJSON());
 
     // vi.mock('node:fs', async () => {
     //   const fs = await vi.importActual('node:fs');
