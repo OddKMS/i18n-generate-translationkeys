@@ -2,7 +2,6 @@ import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
 import { getConfiguration, configFileDefaults } from '#helpers';
 import * as configurationHelper from '#helpers';
 import * as fsMocked from 'node:fs';
-import { $ } from 'zx';
 import { error } from 'node:console';
 import type { configuration } from '#types';
 
