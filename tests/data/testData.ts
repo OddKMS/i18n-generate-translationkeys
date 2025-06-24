@@ -9,9 +9,12 @@ import {
   Faker,
   Randomizer,
 } from '@faker-js/faker';
-import { Volume } from 'memfs';
+import { DirectoryJSON, vol, Volume } from 'memfs';
 
-function generateTestData(configuration: Configuration, seed: number): Volume {
+function generateTestData(
+  configuration: Configuration,
+  seed: number
+): DirectoryJSON {
   // Make sure generated test data are somewhat similar by using
   // the same seed for each of the faker instances.
   faker.seed(seed);
@@ -109,7 +112,7 @@ function generateTestData(configuration: Configuration, seed: number): Volume {
   console.log('Test data created:');
   console.log(testVolume.toTree());
 
-  return testVolume;
+  return testVolume.toJSON();
 }
 
 // If we hit a text, we return. If we get a Translation type we keep

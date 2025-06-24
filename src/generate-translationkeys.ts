@@ -1,8 +1,10 @@
-import { $ } from 'zx';
+import { $, fs } from 'zx';
 import * as path from 'path';
 import * as jq from 'node-jq';
 import { getConfiguration } from '#helpers';
 import { Configuration } from '#types';
+import { existsSync } from 'node:fs';
+import { readdir } from 'node:fs/promises';
 
 const generateKeys = (config?: Configuration) => {
   const {
@@ -22,19 +24,6 @@ const generateKeys = (config?: Configuration) => {
     return verbose && console.log(outputText, ...variables);
   }
 
-  const readFiles = () => {
-    //  Create a union of the different translation files.
-    //  This way, we don't miss out on any keys that may have been added
-    //  to one of the languages but not the other.
-    //
-    //  The translated texts will be combined willy-nilly,
-    //  but we only care about the keys so that is acceptable.
-    const filesFilter = 'reduce .[] as $obj ({}; . * $obj)';
-    const translationFiles = '';
-
-    // const translations = jq -s  $translation_files
-  };
-
   TUIOutput('Generating TranslationKeys object, please wait...');
 
   TUIVerbose('----------------------------------------------------');
@@ -49,7 +38,28 @@ const generateKeys = (config?: Configuration) => {
 
   const translationKeys = outputDirectory + '/' + filename;
 
+  const translationFiles = getTranslationFiles(translationsLocation);
+  console.log(translationFiles);
+
   return { translationKeys, config };
 };
 
+function getTranslationFiles(translationsLocation: string) {
+  let translationFiles: string[] = [];
+
+  // First we check that the translations directory exists at all
+  if (existsSync(translationsLocation)) {
+    readdir(translationsLocation, { recursive: true }).then((files) => {
+      files
+        .filter((file) => file.endsWith('.json'))
+        .forEach((jsonFile) => {
+          translationFiles.push(jsonFile);
+        });
+    });
+  }
+
+  return translationFiles;
+}
+
 export default generateKeys;
+export { getTranslationFiles };
