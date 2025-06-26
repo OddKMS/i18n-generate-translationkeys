@@ -18,6 +18,6 @@ async function getTranslationFiles(translationsLocation: string) {
   return translationFiles;
 }
 
-async function getTranslationKeys() {}
+async function getTranslationKeys(translationFilepaths: string[]) {}
 
 export { getTranslationFiles, getTranslationKeys };

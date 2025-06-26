@@ -69,7 +69,18 @@ describe('the getTranslations function', () => {
 });
 
 describe('the getTranslationKeys function', () => {
-  it('should accept an array of file paths as parameter', async () => {});
+  it('should accept an array of file paths as parameter', async () => {
+    const translationKeysSpy = vi.spyOn(helperSpy, 'getTranslationKeys');
+
+    const testFilepaths: string[] = [
+      './src/i18n/karlson/på/taket/hejsanhoppsan.json',
+      './src/i18n/brødrene/løvehjerte/childhood_trauma.json',
+    ];
+
+    expect(async () => await getTranslationKeys(testFilepaths)).not.toThrow();
+
+    expect(translationKeysSpy).toHaveBeenCalledWith(testFilepaths);
+  });
 
   it.todo(
     'should create an inclusive union of json path keys so that none are left out',
