@@ -1,2 +1,2 @@
 export { getConfiguration, configFileDefaults } from './configuration.ts';
-export { getTranslationFiles } from './translations.ts';
+export { getTranslationFiles, getTranslationKeys } from './translations.ts';

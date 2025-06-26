@@ -1,6 +1,7 @@
 import * as helperSpy from '#helpers';
 import {
   getTranslationFiles,
+  getTranslationKeys,
   getConfiguration,
   configFileDefaults,
 } from '#helpers';
@@ -36,7 +37,7 @@ afterAll(() => {
   vi.resetAllMocks();
 });
 
-describe('the getTranslations helper function', () => {
+describe('the getTranslations function', () => {
   it('should read i18n translations json files', async () => {
     vi.spyOn(helperSpy, 'getConfiguration').mockImplementation(() => {
       return configFileDefaults;
@@ -65,4 +66,18 @@ describe('the getTranslations helper function', () => {
 
     vi.resetAllMocks();
   });
+});
+
+describe('the getTranslationKeys function', () => {
+  it('should accept an array of file paths as parameter', async () => {});
+
+  it.todo(
+    'should create an inclusive union of json path keys so that none are left out',
+    async () => {}
+  );
+
+  it.todo(
+    'should return an object containing the path keys to the translations',
+    async () => {}
+  );
 });
