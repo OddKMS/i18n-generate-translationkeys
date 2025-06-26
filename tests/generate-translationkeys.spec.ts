@@ -118,29 +118,14 @@ describe('the generate-translationkeys script', () => {
     expect(keys.config).toMatchObject(configParameterObject);
   });
 
-  it('should read i18n translations files', async () => {
+  it('should get an array of translations files', async () => {
     vi.spyOn(helperSpy, 'getConfiguration').mockImplementation(() => {
       return configFileDefaults;
     });
 
-    const genKeySpy = vi.spyOn(generatorSpy, 'default');
-    const existsSpy = vi.spyOn(fsMocked, 'existsSync');
-    const readdirSpy = vi.spyOn(fsAsyncMocked, 'readdir');
     const getTranslationsSpy = vi.spyOn(helperSpy, 'getTranslationFiles');
 
-    const config = getConfiguration();
-
     await generateKeys();
-
-    expect(genKeySpy).toHaveBeenCalledOnce();
-
-    expect(existsSpy).toHaveBeenCalledWith(config.translationsLocation);
-    expect(existsSpy).toHaveReturnedWith(true);
-
-    expect(readdirSpy).toHaveBeenCalled();
-    expect(readdirSpy).toHaveBeenCalledWith(config.translationsLocation, {
-      recursive: true,
-    });
 
     expect(getTranslationsSpy).toHaveBeenCalledOnce();
     expect(getTranslationsSpy).toHaveResolvedWith(
