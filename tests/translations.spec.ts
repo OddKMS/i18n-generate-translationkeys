@@ -72,20 +72,32 @@ describe('the getTranslationKeys function', () => {
   it('should accept an array of file paths as parameter', async () => {
     const translationKeysSpy = vi.spyOn(helperSpy, 'getTranslationKeys');
 
-    const testFilepaths: string[] = [
-      './src/i18n/karlson/på/taket/hejsanhoppsan.json',
-      './src/i18n/brødrene/løvehjerte/childhood_trauma.json',
-    ];
+    const config = getConfiguration();
 
-    expect(async () => await getTranslationKeys(testFilepaths)).not.toThrow();
+    const translationFiles = await getTranslationFiles(
+      config.translationsLocation
+    );
 
-    expect(translationKeysSpy).toHaveBeenCalledWith(testFilepaths);
+    expect(
+      async () => await getTranslationKeys(translationFiles)
+    ).not.toThrow();
+
+    expect(translationKeysSpy).toHaveBeenCalledWith(translationFiles);
   });
 
-  it.todo(
-    'should find the json paths that terminate in a translation (text)',
-    async () => {}
-  );
+  it('should find the json paths that terminate in a translation (text)', async () => {
+    const translationKeysSpy = vi.spyOn(helperSpy, 'getTranslationKeys');
+
+    const config = getConfiguration();
+
+    const translationFiles = await getTranslationFiles(
+      config.translationsLocation
+    );
+
+    const translationKeys = await getTranslationKeys(translationFiles);
+
+    expect(translationKeys).toHaveResolvedWith({});
+  });
 
   it.todo('should ignore json paths that lead to nested nodes', async () => {});
 
