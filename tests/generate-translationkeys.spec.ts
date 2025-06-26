@@ -1,6 +1,6 @@
 import generateKeys, * as generatorSpy from '#generate-keys';
 import { $ } from 'zx';
-import * as configurationSpy from '#helpers';
+import * as helperSpy from '#helpers';
 import { getConfiguration, configFileDefaults } from '#helpers';
 import { Configuration } from '#types';
 import {
@@ -45,21 +45,19 @@ afterAll(() => {
 });
 
 describe('the generate-translationkeys script', () => {
-  it('should get a configuration detailing runtime operation if no config is supplied', () => {
-    const configSpy = vi.spyOn(configurationSpy, 'getConfiguration');
+  it('should get a configuration detailing runtime operation if no config is supplied', async () => {
+    const configSpy = vi.spyOn(helperSpy, 'getConfiguration');
 
-    generateKeys();
+    await generateKeys();
 
     expect(configSpy).toHaveBeenCalledOnce();
 
-    const spyConfigResult = configSpy.mock.results[0];
-
     // Supress error ts(2344) since we're checking against an unknown type
     // @ts-ignore
-    expectTypeOf(spyConfigResult.value).toMatchObjectType<Configuration>();
+    expectTypeOf(configSpy).toMatchObjectType<Configuration>();
   });
 
-  it('should accept a configuration object as parameter', () => {
+  it('should accept a configuration object as parameter', async () => {
     const genKeySpy = vi.spyOn(generatorSpy, 'default');
 
     const configParameterObject: Configuration = {
@@ -71,7 +69,7 @@ describe('the generate-translationkeys script', () => {
       quiet: false,
     };
 
-    expect(() => generateKeys(configParameterObject)).not.toThrow();
+    expect(async () => await generateKeys(configParameterObject)).not.toThrow();
 
     expect(genKeySpy).toHaveBeenCalledWith(configParameterObject);
   });
@@ -88,7 +86,7 @@ describe('the generate-translationkeys script', () => {
 
     const genKeySpy = vi.spyOn(generatorSpy, 'default');
     const configSpy = vi
-      .spyOn(configurationSpy, 'getConfiguration')
+      .spyOn(helperSpy, 'getConfiguration')
       .mockImplementationOnce(() => {
         return mockConfigFile;
       });
@@ -109,34 +107,30 @@ describe('the generate-translationkeys script', () => {
     expect(configSpy).not.toHaveReturnedWith(mockConfigFile);
 
     // Key Generation
-    const genKeyPromise = genKeySpy.mock.results[0].value;
-    await genKeyPromise;
-
     expect(genKeySpy).toHaveBeenCalledWith(configParameterObject);
-    expect(genKeySpy).not.toHaveReturnedWith(
-      expect.objectContaining({ config: mockConfigFile })
-    );
-    expect(genKeySpy).toHaveReturnedWith(
+    expect(genKeySpy).not.toHaveResolvedWith(configFileDefaults);
+    expect(genKeySpy).toHaveResolvedWith(
       expect.objectContaining({ config: configParameterObject })
     );
 
     // Output verification
+    expect(keys.config).not.toMatchObject(configFileDefaults);
     expect(keys.config).toMatchObject(configParameterObject);
   });
 
   it('should read i18n translations files', async () => {
-    vi.spyOn(configurationSpy, 'getConfiguration').mockImplementation(() => {
+    vi.spyOn(helperSpy, 'getConfiguration').mockImplementation(() => {
       return configFileDefaults;
     });
 
     const genKeySpy = vi.spyOn(generatorSpy, 'default');
     const existsSpy = vi.spyOn(fsMocked, 'existsSync');
     const readdirSpy = vi.spyOn(fsAsyncMocked, 'readdir');
-    const getTranslationsSpy = vi.spyOn(generatorSpy, 'getTranslationFiles');
+    const getTranslationsSpy = vi.spyOn(helperSpy, 'getTranslationFiles');
 
     const config = getConfiguration();
 
-    generateKeys();
+    await generateKeys();
 
     expect(genKeySpy).toHaveBeenCalledOnce();
 
@@ -149,8 +143,8 @@ describe('the generate-translationkeys script', () => {
     });
 
     expect(getTranslationsSpy).toHaveBeenCalledOnce();
-    expect(getTranslationsSpy).toHaveReturnedWith(
-      expect.objectContaining('*.json')
+    expect(getTranslationsSpy).toHaveResolvedWith(
+      expect.arrayContaining([expect.stringContaining('.json')])
     );
 
     vi.resetAllMocks();
