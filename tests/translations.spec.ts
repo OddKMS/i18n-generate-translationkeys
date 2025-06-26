@@ -83,6 +83,13 @@ describe('the getTranslationKeys function', () => {
   });
 
   it.todo(
+    'should find the json paths that terminate in a translation (text)',
+    async () => {}
+  );
+
+  it.todo('should ignore json paths that lead to nested nodes', async () => {});
+
+  it.todo(
     'should create an inclusive union of json path keys so that none are left out',
     async () => {}
   );
