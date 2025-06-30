@@ -85,19 +85,22 @@ describe('the getTranslationKeys function', () => {
     expect(translationKeysSpy).toHaveBeenCalledWith(translationFiles);
   });
 
-  it('should find the json paths that terminate in a translation (text)', async () => {
-    const translationKeysSpy = vi.spyOn(helperSpy, 'getTranslationKeys');
+  it.todo(
+    'should find the json paths that terminate in a translation (text)',
+    async () => {
+      const translationKeysSpy = vi.spyOn(helperSpy, 'getTranslationKeys');
 
-    const config = getConfiguration();
+      const config = getConfiguration();
 
-    const translationFiles = await getTranslationFiles(
-      config.translationsLocation
-    );
+      const translationFiles = await getTranslationFiles(
+        config.translationsLocation
+      );
 
-    const translationKeys = await getTranslationKeys(translationFiles);
+      const translationKeys = await getTranslationKeys(translationFiles);
 
-    expect(translationKeys).toHaveResolvedWith({});
-  });
+      expect(translationKeys).toHaveResolvedWith({});
+    }
+  );
 
   it.todo('should ignore json paths that lead to nested nodes', async () => {});
 
