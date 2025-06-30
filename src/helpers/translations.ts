@@ -34,7 +34,9 @@ async function readTranslations(translationFilepaths: string[]) {
   return translations;
 }
 
-async function getTranslationKeys(translationFilepaths: string[]) {
+async function getTranslationKeys(
+  translationFilepaths: string[]
+): Promise<Json> {
   const translations = await readTranslations(translationFilepaths);
 
   const options: OptionsInput = {
@@ -60,7 +62,11 @@ async function getTranslationKeys(translationFilepaths: string[]) {
   const keysFilter =
     'reduce paths(type!="object" and type=="string") as $path \
      (.; setpath($path; ($path | join("."))))';
-  const translationKeys = await jq.run(keysFilter, translationsUnion, options);
+  const translationKeys = (await jq.run(
+    keysFilter,
+    translationsUnion,
+    options
+  )) as Json;
 
   return translationKeys;
 }
