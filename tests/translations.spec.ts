@@ -14,6 +14,10 @@ import { afterEach } from 'node:test';
 
 // Set up testdata in an in-memory filesystem
 beforeAll(() => {
+  vi.spyOn(helperSpy, 'getConfiguration').mockImplementation(() => {
+    return configFileDefaults;
+  });
+
   vi.mock('node:fs', async () => {
     const memfs: { fs: typeof fs } = await vi.importActual('memfs');
 
@@ -39,10 +43,6 @@ afterAll(() => {
 
 describe('the getTranslations function', () => {
   it('should read i18n translations json files', async () => {
-    vi.spyOn(helperSpy, 'getConfiguration').mockImplementation(() => {
-      return configFileDefaults;
-    });
-
     const existsSpy = vi.spyOn(fsMocked, 'existsSync');
     const readdirSpy = vi.spyOn(fsAsyncMocked, 'readdir');
     const getTranslationsSpy = vi.spyOn(helperSpy, 'getTranslationFiles');
