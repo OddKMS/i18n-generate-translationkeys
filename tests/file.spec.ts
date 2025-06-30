@@ -43,7 +43,7 @@ afterAll(() => {
 });
 
 describe('The file generator function', () => {
-  it('should take a configuration object as parameter', async () => {
+  it('should take a configuration object and a translationKeys json object as parameter', async () => {
     const createTKFileSpy = vi.spyOn(helperSpy, 'createTranslationKeysFile');
 
     const config = getConfiguration();
@@ -60,11 +60,6 @@ describe('The file generator function', () => {
 
     expect(createTKFileSpy).toHaveBeenCalledWith(config, translationKeys);
   });
-
-  it.todo(
-    'should also take a translationKeys json object as parameter',
-    async () => {}
-  );
 
   it.todo(
     'should create a file in the location dictated by the configuration object',
