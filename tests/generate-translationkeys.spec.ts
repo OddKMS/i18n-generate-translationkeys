@@ -1,12 +1,10 @@
 import generateKeys, * as generatorSpy from '#generate-keys';
-import { $ } from 'zx';
 import * as helperSpy from '#helpers';
 import { getConfiguration, configFileDefaults } from '#helpers';
 import { Configuration } from '#types';
 import {
   afterAll,
   beforeAll,
-  beforeEach,
   describe,
   expect,
   expectTypeOf,
@@ -14,8 +12,6 @@ import {
   vi,
 } from 'vitest';
 import { generateTestData } from './data/testData.ts';
-import * as fsMocked from 'node:fs';
-import * as fsAsyncMocked from 'node:fs/promises';
 import { fs, vol } from 'memfs';
 import { afterEach } from 'node:test';
 
@@ -131,8 +127,19 @@ describe('the generate-translationkeys script', () => {
     expect(getTranslationsSpy).toHaveResolvedWith(
       expect.arrayContaining([expect.stringContaining('.json')])
     );
+  });
 
-    vi.resetAllMocks();
+  it('should get an json object containing the paths to the translation texts', async () => {
+    vi.spyOn(helperSpy, 'getConfiguration').mockImplementation(() => {
+      return configFileDefaults;
+    });
+
+    const getTranslationKeysSpy = vi.spyOn(helperSpy, 'getTranslationKeys');
+
+    await generateKeys();
+
+    expect(getTranslationKeysSpy).toHaveBeenCalledOnce();
+    expect(getTranslationKeysSpy).toHaveResolved();
   });
 
   it.todo('should output a file containing json paths as keys', () => {});
