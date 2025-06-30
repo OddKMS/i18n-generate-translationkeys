@@ -1,9 +1,9 @@
-import { $, fs } from 'zx';
-import * as path from 'path';
-import * as jq from 'node-jq';
-import { getConfiguration, getTranslationFiles } from '#helpers';
+import {
+  getConfiguration,
+  getTranslationFiles,
+  getTranslationKeys,
+} from '#helpers';
 import { Configuration } from '#types';
-import { existsSync } from 'node:fs';
 
 const generateKeys = async (config?: Configuration) => {
   const {
@@ -35,10 +35,9 @@ const generateKeys = async (config?: Configuration) => {
   TUIVerbose('verbose:           ', verbose);
   TUIVerbose('quiet:             ', quiet);
 
-  const translationKeys = outputDirectory + '/' + filename;
-
   const translationFiles = await getTranslationFiles(translationsLocation);
-  console.log(translationFiles);
+
+  const translationKeys = await getTranslationKeys(translationFiles);
 
   return { translationKeys, config };
 };
